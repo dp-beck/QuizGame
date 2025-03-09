@@ -1,0 +1,75 @@
+﻿@page "/buzzer"
+@using KristofferStrube.Blazor.WebIDL
+@rendermode InteractiveServer
+@inject IJSRuntime JsRuntime
+
+<PageTitle>Buzzer</PageTitle>
+
+<h1>Buzzer</h1>
+
+<button class="btn btn-primary" disabled=@_buttonIsClicked @onclick="Buzz">Buzz In!</button>
+
+<p role="status">Time of Buzz: @_buzzTime</p>
+
+<button class="btn btn-primary" @onclick="ResetBuzzer">Reset Button</button>
+
+@code {
+    private string? _buzzTime;
+    private bool _buttonIsClicked = false;
+
+    private async Task Buzz()
+    {
+        _buzzTime = GetBuzzTime();
+        ToggleBuzzer();
+        await PlayBuzz();
+    }
+
+    private void ResetBuzzer()
+    {
+        if (_buttonIsClicked) ToggleBuzzer();
+    }
+
+    private void ToggleBuzzer()
+    {
+        _buttonIsClicked = !_buttonIsClicked;
+    }
+
+    private string GetBuzzTime()
+    {
+        return DateTime.UtcNow.Hour + ":" + DateTime.UtcNow.Minute + ":" 
+                    + DateTime.UtcNow.Second + "." + DateTime.UtcNow.Millisecond;
+    }
+
+    private async Task PlayBuzz()
+    {
+        await using AudioContext context = 
+            await AudioContext.CreateAsync(JsRuntime);
+
+        await using OscillatorNode oscillatorNode =
+            await OscillatorNode.CreateAsync(JsRuntime, context, new()
+            {
+                Type = OscillatorType.Sine,
+                Frequency = 440
+            });
+
+        await using GainNode gainNode =
+            await GainNode.CreateAsync(JsRuntime, context, new()
+            {
+                Gain = 0.1f,
+            });
+
+        await using AudioDestinationNode destinationNode =
+            await context.GetDestinationAsync();
+
+        await oscillatorNode.ConnectAsync(gainNode);
+        await gainNode.ConnectAsync(destinationNode);
+
+        await oscillatorNode.StartAsync();
+
+        await using AudioParam gainParam = await gainNode.GetGainAsync();
+
+        double time = await context.GetCurrentTimeAsync();
+        await gainParam.LinearRampToValueAtTimeAsync(0, time + 0.5);
+    }
+
+}
