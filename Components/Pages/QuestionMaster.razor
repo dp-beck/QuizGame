@@ -1,0 +1,75 @@
+﻿@page "/questions"
+@rendermode InteractiveServer
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Question Master</h1>
+
+@if (_loadedQuestion != null)
+{
+    <p>Question #@_questionCount: @_loadedQuestion.Question</p>
+    
+    <p>Answer: @_loadedQuestion.Answer</p>
+    
+    <button class="btn btn-primary" @onclick="LoadNextQuestion">Next Question</button>
+}
+
+@if (_outOfQuestions)
+{
+    <p> OUT OF QUESTIONS </p>
+}
+
+@code {
+    private QuizQuestion[]? _questions =
+    [
+        new QuizQuestion
+        {
+            Id = 0,
+            Question = "This is a test question",
+            Answer = "This is a test answer",
+        },
+        new QuizQuestion
+        {
+            Id = 1,
+            Question = "What is 2 + 2?",
+            Answer = "4"
+        },
+        new QuizQuestion
+        {
+            Id = 2,
+            Question = "How many roads must a man walk down before he is called a man?",
+            Answer = "The answer is blowin' in the wind."
+        }
+    ];
+
+    private QuizQuestion? _loadedQuestion;
+    private int _questionCount { get; set; }= 1;
+    private bool _outOfQuestions { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_questions != null) _loadedQuestion = _questions[0];
+    }
+
+    public void LoadNextQuestion()
+    {
+        try
+        {
+            _loadedQuestion = _questions[_questionCount];
+            _questionCount++;
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            _outOfQuestions = true;
+        }
+
+    }
+
+    private class QuizQuestion
+    {
+        public int Id { get; set; }
+        public required string Question { get; set; }
+        public required string Answer { get; set; }
+    }
+
+}

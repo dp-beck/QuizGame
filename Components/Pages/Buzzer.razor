@@ -1,5 +1,4 @@
 ﻿@page "/buzzer"
-@using KristofferStrube.Blazor.WebIDL
 @rendermode InteractiveServer
 @inject IJSRuntime JsRuntime
 
@@ -16,6 +15,9 @@
 @code {
     private string? _buzzTime;
     private bool _buttonIsClicked = false;
+    private const int BuzzerFrequency = 440;
+    private const float BuzzerGain = 0.1f;
+    private const double BuzzerTimeLength = 0.5;
 
     private async Task Buzz()
     {
@@ -49,13 +51,13 @@
             await OscillatorNode.CreateAsync(JsRuntime, context, new()
             {
                 Type = OscillatorType.Sine,
-                Frequency = 440
+                Frequency = BuzzerFrequency
             });
 
         await using GainNode gainNode =
             await GainNode.CreateAsync(JsRuntime, context, new()
             {
-                Gain = 0.1f,
+                Gain = BuzzerGain,
             });
 
         await using AudioDestinationNode destinationNode =
@@ -69,7 +71,7 @@
         await using AudioParam gainParam = await gainNode.GetGainAsync();
 
         double time = await context.GetCurrentTimeAsync();
-        await gainParam.LinearRampToValueAtTimeAsync(0, time + 0.5);
+        await gainParam.LinearRampToValueAtTimeAsync(0, time + BuzzerTimeLength);
     }
 
 }
