@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using QuizGame.Components;
+using QuizGame.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,9 @@ builder.Services.AddRazorComponents()
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? 
                        throw new InvalidOperationException("Connection string 'PostgresConnection'" +
                                                            " not found.");
+
+builder.Services.AddDbContextFactory<QuizGameDbContext>((DbContextOptionsBuilder options) => 
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
