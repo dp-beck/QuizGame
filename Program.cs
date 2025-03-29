@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? 
+                       throw new InvalidOperationException("Connection string 'PostgresConnection'" +
+                                                           " not found.");
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
