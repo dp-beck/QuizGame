@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuizGame.Components;
 using QuizGame.Data;
+using QuizGame.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ var connectionString = builder.Configuration.GetConnectionString("PostgresConnec
 
 builder.Services.AddDbContextFactory<QuizGameDbContext>((DbContextOptionsBuilder options) => 
     options.UseNpgsql(connectionString));
+
+builder.Services.AddTransient<QuestionService>();
 
 var app = builder.Build();
 
