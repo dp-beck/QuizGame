@@ -1,0 +1,85 @@
+@page "/addquestion"
+@using QuizGame.Data.Entities
+@rendermode InteractiveServer
+@using QuizGame.Services
+@inject QuestionService questionService
+
+<PageTitle>Add a new Question</PageTitle>
+
+<h1>Add a New Question Here!</h1>
+
+<EditForm Model="@_question" OnSubmit=@SubmitForm>
+    <div>
+        <label>
+            Question:
+            <InputText @bind-Value="_question.QuestionText" />
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Corrent Answer:
+            <InputText @bind-Value="_question.Answer" />
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Wrong Answer 1:
+            <InputText @bind-Value="_question.WrongChoices[0]" />
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Wrong Answer 2:
+            <InputText @bind-Value="_question.WrongChoices[1]" />
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Wrong Answer 3:
+            <InputText @bind-Value="_question.WrongChoices[2]" />
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Question Category:
+            <InputSelect @bind-Value="_question.Category">
+                <option value=null>Select a Category</option>
+                @foreach (Category category in categories)
+                {
+                    <option value="@category">@category.Name</option>
+                }
+            </InputSelect>
+        </label>
+    </div>
+    
+    <input type="Submit" value="Submit" class="btn btn-primary"/>
+</EditForm>
+
+@code {
+    // TO DO: Change this to grab list from Database
+    private Category[] categories =
+    {
+        new Category() {Id= 1, Name= "Philosophy"},
+        new Category() {Id=2, Name="Art"},
+        new Category() {Id=3, Name="Pop Culture"}
+    };
+
+    Question _question = new Question
+    {
+        QuestionText = null,
+        Answer = null,
+        Category = null
+    };
+
+    public void SubmitForm()
+    {
+      
+    }
+
+
+}

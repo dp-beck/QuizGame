@@ -1,7 +1,4 @@
 ﻿@page "/"
-@using QuizGame.Data.Entities
-@using QuizGame.Services
-@inject QuestionService questionService
 
 <PageTitle>Home</PageTitle>
 
@@ -11,29 +8,7 @@
    You can use this for a buzzer. Or you can use this to read questions! 
 </p>
 
-<p>Here you can add a question!</p>
-
-<EditForm Model="@_question" OnSubmit=@SubmitForm>
-   <div>
-      <label>
-         Question:
-         <InputText @bind-Value="_question.QuestionText" />
-      </label>
-   </div>
-   <input type="Submit" value="Submit" class="btn btn-primary"/>
-</EditForm>
-
 @code {
 
-   Question _question = new Question
-   {
-      QuestionText = null,
-      Answer = null
-   };
-
-   public void SubmitForm()
-   {
-      
-   }
-
+   
 }
