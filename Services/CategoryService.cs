@@ -4,14 +4,13 @@ using QuizGame.Data.Entities;
 
 namespace QuizGame.Services;
 
-public class QuestionService(IDbContextFactory<QuizGameDbContext> contextFactory)
+public class CategoryService(IDbContextFactory<QuizGameDbContext> contextFactory)
 {
     private IDbContextFactory<QuizGameDbContext> _contextFactory = contextFactory;
 
-    public async Task AddQuestion(Question question)
+    public async Task<List<Category>> GetCategories()
     {
         await using var context = _contextFactory.CreateDbContext();
-        await context.Questions.AddAsync(question);
-        await context.SaveChangesAsync();
+        return await context.Categories.ToListAsync();
     }
 }

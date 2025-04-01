@@ -17,6 +17,7 @@ builder.Services.AddDbContextFactory<QuizGameDbContext>((DbContextOptionsBuilder
     options.UseNpgsql(connectionString));
 
 builder.Services.AddTransient<QuestionService>();
+builder.Services.AddTransient<CategoryService>();
 
 var app = builder.Build();
 

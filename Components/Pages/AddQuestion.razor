@@ -2,72 +2,72 @@
 @using QuizGame.Data.Entities
 @rendermode InteractiveServer
 @using QuizGame.Services
-@inject QuestionService questionService
+@inject QuestionService QuestionService
+@inject CategoryService CategoryService
 
 <PageTitle>Add a new Question</PageTitle>
 
 <h1>Add a New Question Here!</h1>
 
-<EditForm Model="@_question" OnSubmit=@SubmitForm>
-    <div>
-        <label>
-            Question:
-            <InputText @bind-Value="_question.QuestionText" />
-        </label>
-    </div>
+@if (_categoriesLoaded)
+{
+    <EditForm Model="@_question" OnSubmit=@SubmitForm>
+        <div>
+            <label>
+                Question:
+                <InputText @bind-Value="_question.QuestionText" />
+            </label>
+        </div>
 
-    <div>
-        <label>
-            Corrent Answer:
-            <InputText @bind-Value="_question.Answer" />
-        </label>
-    </div>
+        <div>
+            <label>
+                Correct Answer:
+                <InputText @bind-Value="_question.Answer" />
+            </label>
+        </div>
 
-    <div>
-        <label>
-            Wrong Answer 1:
-            <InputText @bind-Value="_question.WrongChoices[0]" />
-        </label>
-    </div>
+        <div>
+            <label>
+                Wrong Answer 1:
+                <InputText @bind-Value="_question.WrongChoices[0]" />
+            </label>
+        </div>
 
-    <div>
-        <label>
-            Wrong Answer 2:
-            <InputText @bind-Value="_question.WrongChoices[1]" />
-        </label>
-    </div>
+        <div>
+            <label>
+                Wrong Answer 2:
+                <InputText @bind-Value="_question.WrongChoices[1]" />
+            </label>
+        </div>
 
-    <div>
-        <label>
-            Wrong Answer 3:
-            <InputText @bind-Value="_question.WrongChoices[2]" />
-        </label>
-    </div>
+        <div>
+            <label>
+                Wrong Answer 3:
+                <InputText @bind-Value="_question.WrongChoices[2]" />
+            </label>
+        </div>
 
-    <div>
-        <label>
-            Question Category:
-            <InputSelect @bind-Value="_question.Category">
-                <option value=null>Select a Category</option>
-                @foreach (Category category in categories)
-                {
-                    <option value="@category">@category.Name</option>
-                }
-            </InputSelect>
-        </label>
-    </div>
+        <div>
+            <label>
+                Question Category:
+                <InputSelect @bind-Value="@_selectedCategoryId">
+                    @foreach (var category in _categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </InputSelect>
+            </label>
+        </div>
     
-    <input type="Submit" value="Submit" class="btn btn-primary"/>
-</EditForm>
+        <input type="Submit" value="Submit" class="btn btn-primary"/>
+    </EditForm>
+}
+
 
 @code {
-    // TO DO: Change this to grab list from Database
-    private Category[] categories =
-    {
-        new Category() {Id= 1, Name= "Philosophy"},
-        new Category() {Id=2, Name="Art"},
-        new Category() {Id=3, Name="Pop Culture"}
-    };
+    private bool _categoriesLoaded = false;
+    private int _selectedCategoryId;
+    private List<Category>? _categories;
 
     Question _question = new Question
     {
@@ -76,10 +76,15 @@
         Category = null
     };
 
-    public void SubmitForm()
+    protected override async Task OnInitializedAsync()
     {
-      
+        _categories = await CategoryService.GetCategories();
+        _categoriesLoaded = true;
     }
 
-
+    public async Task SubmitForm()
+    {
+        await QuestionService.AddQuestion(_question);
+    }
+    
 }
