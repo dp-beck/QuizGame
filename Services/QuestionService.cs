@@ -1,16 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using QuizGame.Data;
+using QuizGame.Data.DTOs;
 using QuizGame.Data.Entities;
 
 namespace QuizGame.Services;
 
-public class QuestionService(IDbContextFactory<QuizGameDbContext> contextFactory)
+public class QuestionService(
+    IDbContextFactory<QuizGameDbContext> contextFactory,
+    ICategoryService categoryService)
 {
-    private IDbContextFactory<QuizGameDbContext> _contextFactory = contextFactory;
-
-    public async Task AddQuestion(Question question)
+    public async Task AddQuestion(QuestionDto questionDto)
     {
-        await using var context = _contextFactory.CreateDbContext();
+        var category = await categoryService.GetCategory(questionDto.CategoryId);
+        
+        Question question = new Question
+        {
+            Answer = questionDto.Answer,
+            QuestionText = questionDto.QuestionText,
+            Category = category,
+            WrongChoices = questionDto.WrongChoices
+        };
+        
+        await using var context = contextFactory.CreateDbContext();
         await context.Questions.AddAsync(question);
         await context.SaveChangesAsync();
     }

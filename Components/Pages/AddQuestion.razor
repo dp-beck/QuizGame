@@ -1,9 +1,10 @@
 @page "/addquestion"
+@using QuizGame.Data.DTOs
 @using QuizGame.Data.Entities
 @rendermode InteractiveServer
 @using QuizGame.Services
 @inject QuestionService QuestionService
-@inject CategoryService CategoryService
+@inject ICategoryService CategoryService
 
 <PageTitle>Add a new Question</PageTitle>
 
@@ -11,46 +12,46 @@
 
 @if (_categoriesLoaded)
 {
-    <EditForm Model="@_question" OnSubmit=@SubmitForm>
+    <EditForm Model="@_questionDto" OnSubmit=@SubmitForm>
         <div>
             <label>
                 Question:
-                <InputText @bind-Value="_question.QuestionText" />
+                <InputText @bind-Value="_questionDto.QuestionText" />
             </label>
         </div>
 
         <div>
             <label>
                 Correct Answer:
-                <InputText @bind-Value="_question.Answer" />
+                <InputText @bind-Value="_questionDto.Answer" />
             </label>
         </div>
 
         <div>
             <label>
                 Wrong Answer 1:
-                <InputText @bind-Value="_question.WrongChoices[0]" />
+                <InputText @bind-Value="_questionDto.WrongChoices[0]" />
             </label>
         </div>
 
         <div>
             <label>
                 Wrong Answer 2:
-                <InputText @bind-Value="_question.WrongChoices[1]" />
+                <InputText @bind-Value="_questionDto.WrongChoices[1]" />
             </label>
         </div>
 
         <div>
             <label>
                 Wrong Answer 3:
-                <InputText @bind-Value="_question.WrongChoices[2]" />
+                <InputText @bind-Value="_questionDto.WrongChoices[2]" />
             </label>
         </div>
 
         <div>
             <label>
                 Question Category:
-                <InputSelect @bind-Value="@_selectedCategoryId">
+                <InputSelect @bind-Value="@_questionDto.CategoryId">
                     @foreach (var category in _categories)
                     {
                         <option value="@category.Id">@category.Name</option>
@@ -66,14 +67,12 @@
 
 @code {
     private bool _categoriesLoaded = false;
-    private int _selectedCategoryId;
     private List<Category>? _categories;
 
-    Question _question = new Question
+    QuestionDto _questionDto = new QuestionDto
     {
         QuestionText = null,
         Answer = null,
-        Category = null
     };
 
     protected override async Task OnInitializedAsync()
@@ -84,7 +83,7 @@
 
     public async Task SubmitForm()
     {
-        await QuestionService.AddQuestion(_question);
+        await QuestionService.AddQuestion(_questionDto);
     }
     
 }

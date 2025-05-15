@@ -1,3 +1,6 @@
+** Current Thing -- Implement Interfaces for Services **
+** Fix Services to Consume DTOs **
+
 Note on App (In Progress):
 
 This is an app that can be used by multiple people to run an IRL quiz
