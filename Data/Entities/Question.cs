@@ -6,7 +6,6 @@ namespace QuizGame.Data.Entities;
 public class Question
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     [MaxLength(100)]
@@ -17,6 +16,7 @@ public class Question
     
     [MaxLength(50)]
     public Category? Category { get; set; }
-
+    public int CategoryId { get; set; }
+    
     public string[] WrongChoices { get; set; } = new string[3];
 }
