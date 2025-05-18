@@ -1,15 +1,25 @@
 ﻿@page "/questions"
-@using Microsoft.AspNetCore.Routing.Template
+@using QuizGame.Data.Entities
+@using QuizGame.Services
+@inject QuestionService QuestionService
+
 @rendermode InteractiveServer
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>Question Master</PageTitle>
 
 <h1>Question Master</h1>
 
 @if (_loadedQuestion != null)
 {
-    <p>Question #@_questionCount: @_loadedQuestion.Question</p>
+    <p>Question #@_questionCount: @_loadedQuestion.QuestionText</p>
     
+    <ul>
+        @foreach(string choice in multipleChoices)
+        {
+            <li>@choice</li>
+        }        
+    </ul>
+
     <p>Answer: @_loadedQuestion.Answer</p>
     
     <button class="btn btn-primary" @onclick="LoadNextQuestion">Next Question</button>
@@ -35,29 +45,18 @@
 
 
 @code {
-    private QuizQuestion[]? _questions =
-    [
-        new QuizQuestion
-        {
-            Id = 0,
-            Question = "This is a test question",
-            Answer = "This is a test answer",
-        },
-        new QuizQuestion
-        {
-            Id = 1,
-            Question = "What is 2 + 2?",
-            Answer = "4"
-        },
-        new QuizQuestion
-        {
-            Id = 2,
-            Question = "How many roads must a man walk down before he is called a man?",
-            Answer = "The answer is blowin' in the wind."
-        }
-    ];
+    private List<Question>? _questions;
+    private Question? _loadedQuestion;
 
-    private QuizQuestion? _loadedQuestion;
+    private List<string> multipleChoices {
+        get
+        {
+            List<string> list = [.._loadedQuestion.WrongChoices, _loadedQuestion.Answer];
+            var shuffledList = list.OrderBy(x => Guid.NewGuid()).ToList();
+            return shuffledList;
+        }
+         
+    } 
     private int _questionCount { get; set; } = 1;
     private bool _outOfQuestions { get; set; } = false;
     private List<Player> players { get; set; } = new List<Player>();
@@ -65,6 +64,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _questions = await QuestionService.GetAllQuestionsAsync();
         if (_questions != null) _loadedQuestion = _questions[0];
     }
 
@@ -75,7 +75,7 @@
             _loadedQuestion = _questions[_questionCount];
             _questionCount++;
         }
-        catch (IndexOutOfRangeException e)
+        catch (ArgumentOutOfRangeException e)
         {
             _outOfQuestions = true;
         }
@@ -95,14 +95,7 @@
     {
         player.Score++;
     }
-
-    private class QuizQuestion
-    {
-        public int Id { get; set; }
-        public required string Question { get; set; }
-        public required string Answer { get; set; }
-    }
-
+    
     public class Player
     {
         public int playerNumber { get; set; }

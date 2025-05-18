@@ -16,7 +16,7 @@ public class Question
     
     [MaxLength(50)]
     public Category? Category { get; set; }
-    public int CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     
     public string[] WrongChoices { get; set; } = new string[3];
 }
