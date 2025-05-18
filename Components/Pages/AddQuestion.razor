@@ -84,6 +84,10 @@
     public async Task SubmitForm()
     {
         await QuestionService.AddQuestion(_questionDto);
+        _questionDto.QuestionText = null;
+        _questionDto.Answer = null;
+        _questionDto.WrongChoices = new string[3];
+        _questionDto.CategoryId = 0;
     }
     
 }
