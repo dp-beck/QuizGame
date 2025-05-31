@@ -1,6 +1,9 @@
 TO DO:
-2. Create functionality for deleting questions
 3. Create page for editing separate questions
+
+Things to add in the future:
+1. Clean up styling
+2. More warning for deleting of questions
 
 Note on App (In Progress):
 

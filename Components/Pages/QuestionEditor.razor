@@ -1,7 +1,10 @@
 @page "/all-questions"
+@using System.Diagnostics
 @using QuizGame.Data.Entities
 @using QuizGame.Services
 @inject IQuestionService QuestionService
+
+@rendermode InteractiveServer
 
 @{
     /*
@@ -19,7 +22,11 @@
     @foreach (var question in _questions)
     {
         <li>
-            @question.QuestionText <span><button class="btn btn-secondary">Edit</button><button class="btn btn-primary">Delete</button></span>
+            @question.QuestionText 
+            <span>
+                <button class="btn btn-secondary">Edit</button>
+                <button class="btn btn-primary" @onclick="() => DeleteQuestion(question.Id)">Delete</button>
+            </span>
         </li> 
     }
     </ol>
@@ -32,6 +39,13 @@
     protected override async Task OnInitializedAsync()
     {
         _questions = await QuestionService.GetAllQuestionsAsync();
+    }
+
+    public async Task DeleteQuestion(int id)
+    { 
+        Console.Write("works");
+       await QuestionService.DeleteQuestion(id);
+       _questions = await QuestionService.GetAllQuestionsAsync();
     }
 
 }

@@ -28,4 +28,13 @@ public class QuestionService(
         await context.Questions.AddAsync(question);
         await context.SaveChangesAsync();
     }
+
+    public async Task DeleteQuestion(int id)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var question = await context.Questions.FindAsync(id);
+        if (question != null) context.Questions.Remove(question);
+        await context.SaveChangesAsync();
+
+    }
 }
