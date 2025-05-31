@@ -16,7 +16,7 @@ var connectionString = builder.Configuration.GetConnectionString("PostgresConnec
 builder.Services.AddDbContextFactory<QuizGameDbContext>((DbContextOptionsBuilder options) => 
     options.UseNpgsql(connectionString));
 
-builder.Services.AddTransient<QuestionService>();
+builder.Services.AddTransient<IQuestionService, QuestionService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 var app = builder.Build();

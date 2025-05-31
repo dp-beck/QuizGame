@@ -1,5 +1,4 @@
-** Current Thing -- Implement Interfaces for Services **
-** Fix Services to Consume DTOs **
+** Add Question Editor **
 
 Note on App (In Progress):
 

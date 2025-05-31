@@ -6,11 +6,12 @@ using QuizGame.Data.Entities;
 namespace QuizGame.Services;
 
 public class QuestionService(
-    IDbContextFactory<QuizGameDbContext> contextFactory)
+    IDbContextFactory<QuizGameDbContext> contextFactory) : IQuestionService
 {
+    private IDbContextFactory<QuizGameDbContext> _contextFactory = contextFactory;
     public async Task<List<Question>> GetAllQuestionsAsync()
     {
-        await using var context = await contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
         return await context.Questions.ToListAsync();
     }
     public async Task AddQuestion(QuestionDto questionDto)
@@ -23,7 +24,7 @@ public class QuestionService(
             CategoryId = questionDto.CategoryId,
         };
 
-        await using var context = contextFactory.CreateDbContext();
+        await using var context = _contextFactory.CreateDbContext();
         await context.Questions.AddAsync(question);
         await context.SaveChangesAsync();
     }
