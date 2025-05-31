@@ -1,0 +1,37 @@
+@page "/all-questions"
+@using QuizGame.Data.Entities
+@using QuizGame.Services
+@inject IQuestionService QuestionService
+
+@{
+    /*
+    Notes: Gives you a list of all the questions with two buttons: delete and edit;
+    Delete gets rid of the question
+    Edit takes you to a new screen to edit the content of the question
+    */
+}
+
+<h3>Questions</h3>
+
+@if (_questions is not null)
+{
+    <ol>
+    @foreach (var question in _questions)
+    {
+        <li>
+            @question.QuestionText <span><button class="btn btn-secondary">Edit</button><button class="btn btn-primary">Delete</button></span>
+        </li> 
+    }
+    </ol>
+}
+
+@code {
+
+    private List<Question>? _questions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _questions = await QuestionService.GetAllQuestionsAsync();
+    }
+
+}

@@ -1,4 +1,6 @@
-** Add Question Editor **
+TO DO:
+2. Create functionality for deleting questions
+3. Create page for editing separate questions
 
 Note on App (In Progress):
 
