@@ -1,0 +1,26 @@
+@page "/EditQuestion/{questionId:int}"
+@using QuizGame.Data.Entities
+@using QuizGame.Services
+
+@inject IQuestionService QuestionService
+
+@rendermode InteractiveServer
+
+@{/*
+    Displays a form pre-populated with the content of the question, so that you can edit, if needed
+*/}
+
+<h3>Edit Question</h3>
+
+@code {
+    private Question? _question;
+
+    [Parameter]
+    public int QuestionId { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _question = await QuestionService.GetQuestionAsync(QuestionId);
+    }
+    
+}

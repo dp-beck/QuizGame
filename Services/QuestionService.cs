@@ -14,6 +14,13 @@ public class QuestionService(
         await using var context = await _contextFactory.CreateDbContextAsync();
         return await context.Questions.ToListAsync();
     }
+
+    public async Task<Question?> GetQuestionAsync(int questionId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Questions.FirstOrDefaultAsync(q => q.Id == questionId);
+    }
+
     public async Task AddQuestion(QuestionDto questionDto)
     {
         Question question = new Question
