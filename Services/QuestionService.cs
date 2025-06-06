@@ -44,4 +44,11 @@ public class QuestionService(
         await context.SaveChangesAsync();
 
     }
+
+    public async Task EditQuestion(Question question)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        context.Entry(question).State = EntityState.Modified;
+        await context.SaveChangesAsync();
+    }
 }

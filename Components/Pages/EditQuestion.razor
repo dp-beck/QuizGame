@@ -3,6 +3,7 @@
 @using QuizGame.Services
 
 @inject IQuestionService QuestionService
+@inject ICategoryService CategoryService
 
 @rendermode InteractiveServer
 
@@ -12,8 +13,76 @@
 
 <h3>Edit Question</h3>
 
+@if (_noQuestion)
+{
+ <p>Sorry, no question was located with that id.</p>   
+}
+
+@if (_loaded)
+{
+    <EditForm Model="@_question" OnSubmit=@SubmitForm>
+        <div>
+            <label>
+                Question:
+                <InputText @bind-Value="_question.QuestionText" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Correct Answer:
+                <InputText @bind-Value="_question.Answer" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Wrong Answer 1:
+                <InputText @bind-Value="_question.WrongChoices[0]" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Wrong Answer 2:
+                <InputText @bind-Value="_question.WrongChoices[1]" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Wrong Answer 3:
+                <InputText @bind-Value="_question.WrongChoices[2]" />
+            </label>
+        </div>
+
+        <div>
+            <label>
+                Question Category:
+                <InputSelect @bind-Value="@_question.CategoryId">
+                    @foreach (var category in _categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </InputSelect>
+            </label>
+        </div>
+
+        <input type="Submit" value="Submit" class="btn btn-primary"/>
+    </EditForm>
+}
+
+@if (_submitted)
+{
+    <p>Your question has been sucessfully edited.</p>
+}
+
 @code {
     private Question? _question;
+    private bool _loaded;
+    private bool _noQuestion;
+    private List<Category>? _categories;
+    private bool _submitted;
 
     [Parameter]
     public int QuestionId { get; set; }
@@ -21,6 +90,19 @@
     protected override async Task OnInitializedAsync()
     {
         _question = await QuestionService.GetQuestionAsync(QuestionId);
+        if (_question is null)
+        {
+            _noQuestion = true;
+            return;
+        }
+        
+        _categories = await CategoryService.GetCategories();
+        _loaded = true;
     }
     
+    public async Task SubmitForm()
+    {
+        await QuestionService.EditQuestion(_question);
+        _submitted = true;
+    }
 }
