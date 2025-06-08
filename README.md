@@ -1,5 +1,11 @@
 TO DO:
 
+1. Add a way to add categories
+2. Add a way to delete categories
+2. Add Questions
+3. Implement Single Player Mode
+4. Implement way to select questions by category
+
 Things to add in the future:
 1. Clean up styling
 2. More warning for deleting of questions

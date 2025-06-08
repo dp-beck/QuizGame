@@ -12,7 +12,7 @@
 
 @if (_categoriesLoaded)
 {
-    <EditForm Model="@_questionDto" OnSubmit=@SubmitForm>
+    <EditForm Model="@_questionDto" OnSubmit=@SubmitAddQuestionForm>
         <div>
             <label>
                 Question:
@@ -62,8 +62,19 @@
     
         <input type="Submit" value="Submit" class="btn btn-primary"/>
     </EditForm>
-}
+    
+    <h1>Need a new category? Add one here.</h1>
 
+    <EditForm Model="@_categoryDto" OnSubmit=@SubmitAddCategoryForm>
+        <div>
+            <label>
+                Category:
+                <InputText @bind-Value="_categoryDto.Name" />
+            </label>
+        </div>
+        <input type="Submit" value="Submit" class="btn btn-primary"/>
+    </EditForm>
+}
 
 @code {
     private bool _categoriesLoaded = false;
@@ -75,19 +86,30 @@
         Answer = null,
     };
 
+    CategoryDto _categoryDto = new CategoryDto
+    {
+        Name = null
+    };
+
     protected override async Task OnInitializedAsync()
     {
         _categories = await CategoryService.GetCategories();
         _categoriesLoaded = true;
     }
 
-    public async Task SubmitForm()
+    private async Task SubmitAddQuestionForm()
     {
         await QuestionService.AddQuestion(_questionDto);
         _questionDto.QuestionText = null;
         _questionDto.Answer = null;
         _questionDto.WrongChoices = new string[3];
         _questionDto.CategoryId = 0;
+    }
+
+    private async Task SubmitAddCategoryForm()
+    {
+        await CategoryService.AddCategory(_categoryDto);
+        _categoryDto.Name = null;
     }
     
 }

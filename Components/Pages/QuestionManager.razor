@@ -2,6 +2,7 @@
 @using QuizGame.Data.Entities
 @using QuizGame.Services
 @inject IQuestionService QuestionService
+@inject ICategoryService CategoryService
 
 @rendermode InteractiveServer
 
@@ -13,36 +14,72 @@
     */
 }
 
-<h3>Questions</h3>
-
 @if (_questions is not null)
 {
+    <h3>Questions</h3>
+
     <ol>
-    @foreach (var question in _questions)
-    {
-        <li>
-            @question.QuestionText 
-            <span>
-                <a href='/EditQuestion/@question.Id' class="btn btn-secondary">Edit</a>
-                <button class="btn btn-primary" @onclick="() => DeleteQuestion(question.Id)">Delete</button>
-            </span>
-        </li> 
-    }
+        @foreach (var question in _questions)
+        {
+            <li>
+                @question.QuestionText 
+                <span>
+                    <a href='/EditQuestion/@question.Id' class="btn btn-secondary">Edit</a>
+                    <button class="btn btn-primary" @onclick="() => DeleteQuestion(question.Id)">Delete</button>
+                </span>
+            </li> 
+        }
     </ol>
+    
+    <h3>Categories</h3>
+    
+    <ol>
+        @foreach (var category in _categories)
+        {
+            <li>
+                @category.Name 
+                <span>
+                    <button class="btn btn-primary" @onclick="() => DeleteCategory(category.Id)">Delete</button>
+                </span>
+            </li> 
+        }
+    </ol>
+    
+    <p>@_message</p>
 }
 
 @code {
 
     private List<Question>? _questions;
+    private List<Category>? _categories;
+    private string? _message = null;
 
     protected override async Task OnInitializedAsync()
     {
         _questions = await QuestionService.GetAllQuestionsAsync();
+        _categories = await CategoryService.GetCategories();
     }
 
     private async Task DeleteQuestion(int id)
     {
         await QuestionService.DeleteQuestion(id);
         _questions = await QuestionService.GetAllQuestionsAsync();
+    }
+    
+    private async Task DeleteCategory(int id)
+    {
+        // Check to see if the category is being used first
+        foreach (var question in _questions)
+        {
+            if (question.CategoryId == id)
+            {
+                _message = "Sorry. This category is being used. This category must be unused before deleting";
+                return;
+            }
+        }
+        
+        await CategoryService.DeleteCategory(id);
+        _categories = await CategoryService.GetCategories();
+        _message = "Success. Category deleted";
     }
 }
