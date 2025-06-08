@@ -23,7 +23,7 @@
         <li>
             @question.QuestionText 
             <span>
-                <button class="btn btn-secondary">Edit</button>
+                <a href='/EditQuestion/@question.Id' class="btn btn-secondary">Edit</a>
                 <button class="btn btn-primary" @onclick="() => DeleteQuestion(question.Id)">Delete</button>
             </span>
         </li> 
@@ -40,11 +40,9 @@
         _questions = await QuestionService.GetAllQuestionsAsync();
     }
 
-    public async Task DeleteQuestion(int id)
-    { 
-        Console.Write("works");
-       await QuestionService.DeleteQuestion(id);
-       _questions = await QuestionService.GetAllQuestionsAsync();
+    private async Task DeleteQuestion(int id)
+    {
+        await QuestionService.DeleteQuestion(id);
+        _questions = await QuestionService.GetAllQuestionsAsync();
     }
-
 }
