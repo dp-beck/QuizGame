@@ -1,8 +1,9 @@
 TO DO:
 
-2. Add Questions
+
 3. Implement Single Player Mode
 4. Implement way to select questions by category
+2. Add Questions
 
 Things to add in the future:
 1. Clean up styling

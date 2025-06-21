@@ -1,0 +1,6 @@
+.time-bar {
+    height: 20px;
+    width: var(--time-bar-width);
+    background-color: red;
+    border: 1px solid red;
+}

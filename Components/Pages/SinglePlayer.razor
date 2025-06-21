@@ -1,13 +1,109 @@
 @page "/single-player"
+@using System.Timers
+@using QuizGame.Data.Entities
+@using QuizGame.Services
+@inject IQuestionService QuestionService;
+@rendermode InteractiveServer
 
 @{/*
     Single Player Mode - Should feed you the questions. Should let you choose which one you want.
     Should time you. Score should be based on time. Maybe a diminishing bar to represent time left.
     Should give you your score at the end.
+    
+    // Step 1: Get Questions
 */}
 
-<h3>SinglePlayer</h3>
+<h3>Single Player Mode</h3>
+
+@if (_loadedQuestion != null)
+{
+    <p>Question #@_questionCount: @_loadedQuestion.QuestionText</p>
+
+    <ul>
+        @foreach(string choice in multipleChoices)
+        {
+            <li>
+                <button class="btn btn-primary" @onclick="() => SelectAnswer(choice)">@choice</button>
+            </li>
+        }
+    </ul>
+    
+    <div class="time-bar" style="--time-bar-width:@TimeBarWidth"> </div>
+    <Countdown @ref="timer" />
+    <button @onclick="() => timer.Start(10)">Restart Timer</button>
+
+
+}
+
+@if (_outOfQuestions)
+{
+    <p> OUT OF QUESTIONS </p>
+    <p>Your score is: @_score</p>
+}
+
 
 @code {
+    private List<Question>? _questions;
+    private Question? _loadedQuestion;
+    private int _questionCount { get; set; } = 1;
+    private bool _outOfQuestions;
+    private int _score;
+    
+    protected Countdown timer;
+    private string _msg { get; set; }
+    public string TimeBarWidth { get; set; } = "200px";
+    
+    private List<string> multipleChoices {
+        get
+        {
+            List<string> list = [.._loadedQuestion.WrongChoices, _loadedQuestion.Answer];
+            var shuffledList = list.OrderBy(x => Guid.NewGuid()).ToList();
+            return shuffledList;
+        }
+    } 
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _questions = await QuestionService.GetAllQuestionsAsync();
+        if (_questions != null) _loadedQuestion = _questions[0];
+    }
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && timer is not null)
+        {
+            timer.Start(10);
+        }
+    }
+
+    private void TimerOutCallback()
+    {
+        _msg = "Timer Done";
+    }
+    
+    public void SelectAnswer(string choice)
+    {
+        if (choice == _loadedQuestion.Answer)
+        {
+            _score++;
+        }
+        
+        LoadNextQuestion();
+
+    }
+
+    public void LoadNextQuestion()
+    {
+        try
+        {
+            _loadedQuestion = _questions[_questionCount];
+            _questionCount++;
+        }
+        catch (ArgumentOutOfRangeException e)
+        {
+            _outOfQuestions = true;
+        }
+    }
+    
     
 }
