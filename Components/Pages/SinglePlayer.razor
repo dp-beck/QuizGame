@@ -28,9 +28,9 @@
         }
     </ul>
     
-    <div class="time-bar" style="--time-bar-width:@TimeBarWidth"> </div>
+    
     <Countdown @ref="timer" />
-    <button @onclick="() => timer.Start(10)">Restart Timer</button>
+    <button @onclick="() => timer.Start(10, 200)">Restart Timer</button>
 
 
 }
@@ -50,8 +50,6 @@
     private int _score;
     
     protected Countdown timer;
-    private string _msg { get; set; }
-    public string TimeBarWidth { get; set; } = "200px";
     
     private List<string> multipleChoices {
         get
@@ -72,13 +70,12 @@
     {
         if (firstRender && timer is not null)
         {
-            timer.Start(10);
+            timer.Start(10, 200);
         }
     }
 
     private void TimerOutCallback()
     {
-        _msg = "Timer Done";
     }
     
     public void SelectAnswer(string choice)

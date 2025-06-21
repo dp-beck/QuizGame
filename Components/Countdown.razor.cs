@@ -10,7 +10,10 @@ public partial class Countdown : ComponentBase, IDisposable
     private System.Timers.Timer _timer = null!;
     private int _secondsToRun = 0;
     protected string Time { get; set; } = "00:00";
-    
+    public int TimeBarWidthNumber { get; set; } = 0;
+
+    public string TimeBarWidthStyle => TimeBarWidthNumber + "px";
+
     protected override async Task OnInitializedAsync()
     {
         _timer = new System.Timers.Timer(1000);
@@ -18,9 +21,10 @@ public partial class Countdown : ComponentBase, IDisposable
         _timer.AutoReset = true;
     }
     
-    public void Start(int secondsToRun)
+    public void Start(int secondsToRun, int timeBarwidth)
     {
         _secondsToRun = secondsToRun;
+        TimeBarWidthNumber = timeBarwidth;
 
         if (_secondsToRun > 0)
         {
@@ -43,6 +47,7 @@ public partial class Countdown : ComponentBase, IDisposable
     private async Task HandleTimerElapsedAsync()
     {
         _secondsToRun--;
+        TimeBarWidthNumber -= 20;
 
         await InvokeAsync(() =>
         {
