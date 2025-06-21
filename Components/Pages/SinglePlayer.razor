@@ -6,11 +6,9 @@
 @rendermode InteractiveServer
 
 @{/*
-    Single Player Mode - Should feed you the questions. Should let you choose which one you want.
-    Should time you. Score should be based on time. Maybe a diminishing bar to represent time left.
-    Should give you your score at the end.
-    
-    // Step 1: Get Questions
+   // Change it so that there is a start game button that shows first question and starts the timer.
+   // Change it so that when you hit the last question -- the timer stops and the buttons become unresponsive
+   // and a new button pops up to restart the game
 */}
 
 <h3>Single Player Mode</h3>
@@ -82,10 +80,11 @@
     {
         if (choice == _loadedQuestion.Answer)
         {
-            _score++;
+            _score += timer.TimeBarWidthNumber;
         }
         
         LoadNextQuestion();
+        timer.Start(10, 200);
 
     }
 
