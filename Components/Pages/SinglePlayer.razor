@@ -6,9 +6,10 @@
 @rendermode InteractiveServer
 
 @{/*
-   // 2. Change it so that when you hit the last question -- the timer stops and the buttons become unresponsive
-   // and a new button pops up to restart the game
-   // 3. Change it so that when you hit the 0 on the timer, you auto go to the next question and restart timer
+
+   3. Change it so that when you hit the 0 on the timer, you auto go to the next question and restart timer
+   
+  
 */}
 
 <h3>Single Player Mode</h3>
@@ -23,7 +24,9 @@
     <button @onclick="StartGame">Start Game</button>    
 }
 
-@if (_loadedQuestion is not null && _gameStarted)
+@if (_loadedQuestion is not null 
+     && _gameStarted
+     && !_gameOver)
 {
     <p>Question #@_questionCount: @_loadedQuestion.QuestionText</p>
 
@@ -43,6 +46,7 @@
 {
     <p> OUT OF QUESTIONS </p>
     <p>Your score is: @_score</p>
+    <button @onclick="Restart">Restart?</button>
 }
 
 
@@ -52,6 +56,7 @@
     private int _questionCount { get; set; } = 1;
     private bool _outOfQuestions;
     private bool _gameStarted;
+    private bool _gameOver;
     private int _score;
     
     protected Countdown timer;
@@ -104,8 +109,23 @@
         catch (ArgumentOutOfRangeException e)
         {
             _outOfQuestions = true;
+            _gameOver = true;
+            timer.countdownVisibility = "hidden";
+            timer.Stop();
         }
     }
-    
+
+    public void Restart()
+    {
+        _gameStarted = true;
+        _gameOver = false;
+        _outOfQuestions = false;
+        _score = 0;
+        timer.Start(10, 200);
+        timer.countdownVisibility = "visible";
+        _questionCount = 0;
+        _questions = _questions.OrderBy(x => Guid.NewGuid()).ToList();
+        LoadNextQuestion();
+    }
     
 }
