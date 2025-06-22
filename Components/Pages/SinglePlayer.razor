@@ -7,9 +7,7 @@
 
 @{/*
 
-   3. Change it so that when you hit the 0 on the timer, you auto go to the next question and restart timer
-   
-  
+
 */}
 
 <h3>Single Player Mode</h3>
@@ -40,7 +38,7 @@
     </ul>
 }
 
-<Countdown @ref="timer" />
+<Countdown @ref="timer" TimerOut="TimerOutCallback"/>
 
 @if (_outOfQuestions)
 {
@@ -78,6 +76,12 @@
 
     private void TimerOutCallback()
     {
+        InvokeAsync(() =>
+        {
+            LoadNextQuestion();
+            StateHasChanged();
+            timer.Start(10, 200);
+        });
     }
 
     public void StartGame()
