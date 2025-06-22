@@ -6,14 +6,24 @@
 @rendermode InteractiveServer
 
 @{/*
-   // Change it so that there is a start game button that shows first question and starts the timer.
-   // Change it so that when you hit the last question -- the timer stops and the buttons become unresponsive
+   // 2. Change it so that when you hit the last question -- the timer stops and the buttons become unresponsive
    // and a new button pops up to restart the game
+   // 3. Change it so that when you hit the 0 on the timer, you auto go to the next question and restart timer
 */}
 
 <h3>Single Player Mode</h3>
 
-@if (_loadedQuestion != null)
+@if (_loadedQuestion is not null && !_gameStarted)
+{
+    <p>Welcome to single player mode. You will have ten seconds to answer each question. 
+        The quicker you answer the question, the higher your score will be. The questions are
+        all multiple choice.
+    </p>
+
+    <button @onclick="StartGame">Start Game</button>    
+}
+
+@if (_loadedQuestion is not null && _gameStarted)
 {
     <p>Question #@_questionCount: @_loadedQuestion.QuestionText</p>
 
@@ -25,13 +35,9 @@
             </li>
         }
     </ul>
-    
-    
-    <Countdown @ref="timer" />
-    <button @onclick="() => timer.Start(10, 200)">Restart Timer</button>
-
-
 }
+
+<Countdown @ref="timer" />
 
 @if (_outOfQuestions)
 {
@@ -45,6 +51,7 @@
     private Question? _loadedQuestion;
     private int _questionCount { get; set; } = 1;
     private bool _outOfQuestions;
+    private bool _gameStarted;
     private int _score;
     
     protected Countdown timer;
@@ -63,17 +70,16 @@
         _questions = await QuestionService.GetAllQuestionsAsync();
         if (_questions != null) _loadedQuestion = _questions[0];
     }
-    
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender && timer is not null)
-        {
-            timer.Start(10, 200);
-        }
-    }
 
     private void TimerOutCallback()
     {
+    }
+
+    public void StartGame()
+    {
+        timer.Start(10, 200);
+        timer.countdownVisibility = "visible";
+        _gameStarted = true;
     }
     
     public void SelectAnswer(string choice)

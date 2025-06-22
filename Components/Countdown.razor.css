@@ -1,3 +1,6 @@
+.visibility {
+    visibility: var(--countdown-visibility);
+}
 .clock {
     color: black;
     font-family: sans-serif;

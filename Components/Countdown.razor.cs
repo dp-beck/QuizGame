@@ -13,6 +13,7 @@ public partial class Countdown : ComponentBase, IDisposable
     public int TimeBarWidthNumber { get; set; } = 0;
 
     public string TimeBarWidthStyle => TimeBarWidthNumber + "px";
+    public string countdownVisibility { get; set; } = "hidden";
 
     protected override async Task OnInitializedAsync()
     {
